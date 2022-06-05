@@ -73,5 +73,12 @@ namespace MissingChecker
             );
             MissingCheckerController.ExecuteMissingCheck(request);
         }
+
+        [MenuItem("MissingChecker/Execute Diff Sample01")]
+        public static void Execute02()
+        {
+            var setting = LocalStorageUtility.Load<ExecuteSetting>("setting_master.json");
+            MissingCheckerController.ExecuteDiffCheck(setting.CheckAssetPaths.ToArray());
+        }
     }
 }
