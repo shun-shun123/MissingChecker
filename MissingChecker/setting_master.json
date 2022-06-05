@@ -1,8 +1,8 @@
 {
     "CheckAssetPaths": [
-        "Assets/Sample",
-        "Assets/Hoge",
-        "Assets/Hoge/Huga"
+        "Assets/MissingShader/",
+        "Assets/Sample/MissingObjectReference/",
+        "Assets/Sample/MissingScript/"
     ],
     "CheckFileExtensions": [
         ".prefab",
