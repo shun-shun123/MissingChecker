@@ -54,6 +54,13 @@ namespace MissingChecker
             Validate();
         }
 
+        internal ExecuteRequest(ExecuteSetting setting) : this(
+            setting.CheckAssetPaths,
+            setting.CheckFileExtensions)
+        {
+
+        }
+
         private void Validate()
         {
             {
