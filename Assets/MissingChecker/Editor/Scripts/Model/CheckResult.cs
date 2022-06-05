@@ -9,7 +9,7 @@ namespace MissingChecker
 
         public string ComponentName;
 
-        public CheckResult(string assetPath) : this(assetPath, "---")
+        public CheckResult(string assetPath) : this(assetPath, "")
         {
         }
 

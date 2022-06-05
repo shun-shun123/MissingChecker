@@ -69,7 +69,7 @@ namespace MissingChecker
             var request = new ExecuteRequest(
                 setting.CheckAssetPaths, 
                 setting.CheckFileExtensions, 
-                exporters: new System.Collections.Generic.List<IExporter> { CsvExporter.Default, JsonExporter.Default }
+                exporters: new System.Collections.Generic.List<BaseExporter> { CsvExporter.Default, JsonExporter.Default }
             );
             MissingCheckerController.ExecuteMissingCheck(request);
         }

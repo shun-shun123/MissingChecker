@@ -2,23 +2,14 @@ using System.Text;
 
 namespace MissingChecker
 {
-    public class CsvExporter : IExporter
+    public class CsvExporter : BaseExporter
     {
         public static CsvExporter Default => new CsvExporter();
 
-        internal CsvExporter()
-        {
-            _report = new Report();
-        }
+        private CsvExporter() : base()
+        {}
 
-        private Report _report;
-
-        public void Add(string assetPath)
-        {
-            _report.Results.Add(new CheckResult(assetPath));
-        }
-
-        public void Export()
+        public override void Export()
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(_report.Title);
@@ -38,18 +29,6 @@ namespace MissingChecker
                 }
             }
             LocalStorageUtility.Save(builder.ToString(), _report.Title + _report.Time + ".csv");
-        }
-
-        public void Reuse()
-        {
-            _report.Title = "";
-            _report.Time = LocalStorageUtility.TimeAsString;
-            _report.Results.Clear();
-        }
-
-        public void SetTitle(string title)
-        {
-            _report.Title = title;
         }
     }
 }
