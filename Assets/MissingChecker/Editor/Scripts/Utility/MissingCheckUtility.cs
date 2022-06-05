@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEditor;
+using UnityEngine;
 
 namespace MissingChecker
 {
@@ -13,7 +14,8 @@ namespace MissingChecker
             string[] reportFiles;
             try
             {
-                reportFiles = Directory.GetFiles(path)
+                var combinedPath = Path.Combine(Application.dataPath, $"../MissingChecker/{path}");
+                reportFiles = Directory.GetFiles(combinedPath)
                     .Where(i => Path.GetExtension(i) == ".json")
                     .OrderBy(i =>
                     {
