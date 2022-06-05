@@ -1,0 +1,12 @@
+{
+    "CheckAssetPaths": [
+        "Assets/Sample",
+        "Assets/Hoge",
+        "Assets/Hoge/Huga"
+    ],
+    "CheckFileExtensions": [
+        ".prefab",
+        ".anim",
+        ".mat"
+    ]
+}
