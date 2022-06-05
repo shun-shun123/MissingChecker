@@ -3,21 +3,11 @@ using UnityEngine;
 
 namespace MissingChecker
 {
-    public enum LogLevel
-    {
-        All = 0,
-        Log,
-        Warn,
-        Error,
-        Exception,
-        None
-    }
-
-    public static class LogUtility 
+    internal static class LogUtility 
     {
         private const string OUTPUT_LOG_DEFINE = "MISSING_CHECKER_OUTPUT_LOG";
 
-        public static LogLevel Level;
+        internal static LogLevel Level;
 
 
         [System.Diagnostics.Conditional(OUTPUT_LOG_DEFINE)]

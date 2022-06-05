@@ -6,14 +6,12 @@ namespace MissingChecker
 {
     internal static class LocalStorageUtility
     {
-        private static string _savedDirectory => Path.Combine(Application.dataPath, "../MissingChecker");
-
         internal static string TimeAsString => DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
 
         internal static T Load<T>(string fileName)
         {
             T data = default;
-            var filePath = Path.Combine(_savedDirectory, fileName);
+            var filePath = PathUtility.Combine(fileName);
             if (!File.Exists(filePath))
             {
                 return data;
@@ -44,14 +42,13 @@ namespace MissingChecker
         {
             try
             {
-                var filePath = Path.Combine(_savedDirectory, fileName);
+                var filePath = PathUtility.Combine(fileName);
                 var directory = Path.GetDirectoryName(filePath);
                 CreateSaveDirectoryIfNeed(directory);
                 using (var sw = new StreamWriter(File.Open(filePath, FileMode.OpenOrCreate)))
                 {
                     sw.Write(content);
                 }
-                LogUtility.Log($"saved at {filePath}\ncontent: {content}");
             }
             catch (Exception ex)
             {
@@ -69,7 +66,7 @@ namespace MissingChecker
                     Directory.CreateDirectory(directory);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
