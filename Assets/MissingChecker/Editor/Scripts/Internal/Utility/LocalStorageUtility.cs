@@ -10,14 +10,21 @@ namespace MissingChecker
 
         internal static T Load<T>(string fileName)
         {
-            T data = default;
             var filePath = PathUtility.Combine(fileName);
-            if (!File.Exists(filePath))
+            return LoadFromAbsolutePath<T>(filePath);
+        }
+
+        internal static T LoadFromAbsolutePath<T>(string absolutePath)
+        {
+            T data = default;
+            if (!File.Exists(absolutePath))
             {
                 return data;
             }
-            using (var sr = new StreamReader(File.Open(filePath, FileMode.Open)))
+
+            using (var sr = new StreamReader(File.Open(absolutePath, FileMode.Open)))
             {
+
                 var content = sr.ReadToEnd();
                 data = JsonUtility.FromJson<T>(content);
             }

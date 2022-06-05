@@ -1,18 +1,18 @@
 using System;
-using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 namespace MissingChecker
 {
-    public class MissingCheckerWindow : EditorWindow
+    internal class MissingCheckerWindow : EditorWindow
     {
         private static MissingCheckerWindow _window;
 
-        private readonly List<string> _searchPaths = new List<string>();
+        private ExecuteSetting _executeSetting = new ExecuteSetting();
 
         [MenuItem("MissingChecker/Open window")]
-        public static void Open()
+        internal static void Open()
         {
             if (_window == null)
             {
@@ -30,11 +30,14 @@ namespace MissingChecker
         private void OnGUI()
         {
             DrawCheckPathList();
+            DrawCheckExtensionList();
 
-            if (_searchPaths.Count == 0)
+            if (_executeSetting.CheckAssetPaths.Count == 0)
             {
                 return;
             }
+            DrawReadWritePreset();
+
             if (GUILayout.Button(Localization.Get("Execute")))
             {
             }
@@ -42,29 +45,113 @@ namespace MissingChecker
 
         private void DrawCheckPathList()
         {
+            GUILayout.Label("Check asset path", EditorStyles.boldLabel);
             using (new GUILayout.VerticalScope())
             {
                 int i = 0;
-                for (i = 0; i < _searchPaths.Count; i++)
+                for (i = 0; i < _executeSetting.CheckAssetPaths.Count; i++)
                 {
                     using (new GUILayout.HorizontalScope())
                     {
-                        _searchPaths[i] = GUILayout.TextField(_searchPaths[i]);
+                        _executeSetting.CheckAssetPaths[i] = GUILayout.TextField(_executeSetting.CheckAssetPaths[i]);
                         if (GUILayout.Button(Localization.Get("X")))
                         {
                             break;
                         }
                     }
                 }
-                if (i != _searchPaths.Count)
+                if (i != _executeSetting.CheckAssetPaths.Count)
                 {
-                    _searchPaths.RemoveAt(i);
+                    _executeSetting.CheckAssetPaths.RemoveAt(i);
                 }
 
                 if (GUILayout.Button(Localization.Get("+")))
                 {
-                    _searchPaths.Add("");
+                    _executeSetting.CheckAssetPaths.Add("");
                 }
+            }
+        }
+
+        private void DrawCheckExtensionList()
+        {
+            GUILayout.Label("Check file extensions", EditorStyles.boldLabel);
+            using (new GUILayout.VerticalScope())
+            {
+                int i = 0;
+                for (i = 0; i < _executeSetting.CheckFileExtensions.Count; i++)
+                {
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        _executeSetting.CheckFileExtensions[i] = GUILayout.TextField(_executeSetting.CheckFileExtensions[i]);
+                        if (GUILayout.Button(Localization.Get("X")))
+                        {
+                            break;
+                        }
+                    }
+                }
+                if (i != _executeSetting.CheckFileExtensions.Count)
+                {
+                    _executeSetting.CheckFileExtensions.RemoveAt(i);
+                }
+
+                if (GUILayout.Button(Localization.Get("+")))
+                {
+                    _executeSetting.CheckFileExtensions.Add("");
+                }
+            }
+        }
+
+        private void DrawReadWritePreset()
+        {
+            using (new GUILayout.HorizontalScope())
+            {
+                if (GUILayout.Button(Localization.Get("Save Preset")))
+                {
+                    ShowSavePresetConfirmDialog();
+                }
+                if (GUILayout.Button(Localization.Get("Load Preset")))
+                {
+                    ShowLoadPresetConfirmDialog();
+                }
+            }
+        }
+
+        private void ShowSavePresetConfirmDialog()
+        {
+            if (!Directory.Exists(PathUtility.PresetDirectory))
+            {
+                Directory.CreateDirectory(PathUtility.PresetDirectory);
+            }
+            var savedPath = EditorUtility.SaveFilePanel("Save preset", PathUtility.PresetDirectory, "new_preset", "json");
+            if (string.IsNullOrEmpty(savedPath))
+            {
+                return;
+            }
+
+            var savedDirectory = PathUtility.GetDirectoryName(savedPath);
+            var savedDirectoryInfo = PathUtility.GetDirectoryInfo(savedDirectory);
+            var targetDirectoryInfo = PathUtility.GetDirectoryInfo(PathUtility.PresetDirectory);
+            if (savedDirectoryInfo == targetDirectoryInfo)
+            {
+                EditorUtility.DisplayDialog(Localization.Get("Warning"), $"Preset can't be saved at {savedDirectory}\nPreset must be saved at {PathUtility.PresetDirectory}", "Close");
+                return;
+            }
+
+            var savedFileName = PathUtility.GetFileName(savedPath);
+            LocalStorageUtility.SaveAsJson(_executeSetting, $"{PathUtility.PRESET}/{savedFileName}.json");
+        }
+
+        private void ShowLoadPresetConfirmDialog()
+        {
+            var loadPath = EditorUtility.OpenFilePanel("Load Preset", PathUtility.PresetDirectory, "json");
+            if (string.IsNullOrEmpty(loadPath))
+            {
+                return;
+            }
+            var preset = LocalStorageUtility.LoadFromAbsolutePath<ExecuteSetting>(loadPath);
+            if (preset != null)
+            {
+                _executeSetting = preset;
             }
         }
 
