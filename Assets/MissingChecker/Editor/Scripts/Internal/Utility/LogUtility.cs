@@ -5,12 +5,8 @@ namespace MissingChecker
 {
     internal static class LogUtility 
     {
-        private const string OUTPUT_LOG_DEFINE = "MISSING_CHECKER_OUTPUT_LOG";
-
         internal static LogLevel Level;
 
-
-        [System.Diagnostics.Conditional(OUTPUT_LOG_DEFINE)]
         internal static void Log(string message)
         {
             if (Level > LogLevel.Log)
