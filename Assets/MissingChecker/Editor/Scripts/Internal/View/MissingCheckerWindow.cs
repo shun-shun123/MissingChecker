@@ -40,6 +40,8 @@ namespace MissingChecker
 
             if (GUILayout.Button(Localization.Get("Execute")))
             {
+                var request = new ExecuteRequest(_executeSetting);
+                MissingCheckerController.ExecuteMissingCheck(request);
             }
         }
 
