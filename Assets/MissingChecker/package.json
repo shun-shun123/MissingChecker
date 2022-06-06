@@ -1,0 +1,15 @@
+{
+    "name": "com.mummy.missingchecker",
+    "version": "0.0.1",
+    "displayName": "Missing Checker",
+    "description": "This is a Missing Checker package",
+    "unity": "2020.3",
+   "keywords": [
+      "missing checker",
+    ],
+    "author": {
+      "name": "Shunsuke Saito",
+      "email": "shunsuke15vb@gmail.com",
+      "url": "https://twitter.com/shun_shun_mummy"
+    }
+  }
