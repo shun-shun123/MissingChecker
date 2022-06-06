@@ -1,11 +1,11 @@
 {
     "name": "com.mummy.missingchecker",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "displayName": "Missing Checker",
     "description": "This is a Missing Checker package",
     "unity": "2020.3",
    "keywords": [
-      "missing checker",
+      "missing checker"
     ],
     "author": {
       "name": "Shunsuke Saito",
