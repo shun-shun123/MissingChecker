@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,6 +20,8 @@ namespace MissingChecker
 
         private GUIContent _deleteButtonTexture;
         private GUIContent _createNewButtonTexture;
+
+        private readonly List<string> _missingPropertyObjects = new List<string>();
 
         [MenuItem("MissingChecker/Open window")]
         internal static void Open()
@@ -53,7 +58,11 @@ namespace MissingChecker
 
             if (GUILayout.Button(Localization.Get("Execute")))
             {
+                _missingPropertyObjects.Clear();
                 var request = new ExecuteRequest(_executeSetting);
+                request.OnChecked += OnCheckAt;
+                request.OnSuccess += OnSuccess;
+                request.OnException += OnException;
                 MissingCheckerController.ExecuteMissingCheck(request);
             }
         }
@@ -194,21 +203,27 @@ namespace MissingChecker
             }
         }
 
-        private static void OnSearchAt(string path)
+        private void OnCheckAt(string path, bool hasMissingProperty)
         {
-            EditorUtility.DisplayProgressBar("Checking assets", $"Checking at {path}", 0.0f);
+            if (hasMissingProperty)
+            {
+                _missingPropertyObjects.Add(path);
+            }
         }
 
-        private static void OnSuccess()
+        private void OnSuccess()
         {
-            EditorUtility.ClearProgressBar();
-            EditorUtility.DisplayDialog("MissingChecker", "Complete checking", "OK");
+            var missings = new StringBuilder();
+            foreach (var m in _missingPropertyObjects)
+            {
+                missings.Append($"{m}\n");
+            }
+            Debug.Log($"=====All missing=====\n {missings}");
         }
 
-        private static void OnException(Exception ex)
+        private void OnException(Exception ex)
         {
-            EditorUtility.ClearProgressBar();
-            EditorUtility.DisplayDialog("MissingChecker Failed", $"{ex}\n{ex.Message}", "Close");
+            Debug.LogException(ex);
         }
     }
 }
