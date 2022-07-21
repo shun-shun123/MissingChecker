@@ -7,9 +7,16 @@ namespace MissingChecker
 {
     internal class MissingCheckerWindow : EditorWindow
     {
+        private const int DEFAULT_UI_HEIGHT = 24;
+
+        private const float DEFAULT_SPACE = 8f;
+
         private static MissingCheckerWindow _window;
 
         private ExecuteSetting _executeSetting = new ExecuteSetting();
+
+        private GUIContent _deleteButtonTexture;
+        private GUIContent _createNewButtonTexture;
 
         [MenuItem("MissingChecker/Open window")]
         internal static void Open()
@@ -25,6 +32,12 @@ namespace MissingChecker
         private void OnShowWindow()
         {
             titleContent = new UnityEngine.GUIContent(Localization.Get("MissingChecker"));
+        }
+
+        private void OnEnable()
+        {
+            _deleteButtonTexture = EditorGUIUtility.IconContent("winbtn_win_close");
+            _createNewButtonTexture = EditorGUIUtility.IconContent("CreateAddNew");
         }
 
         private void OnGUI()
@@ -55,19 +68,25 @@ namespace MissingChecker
                 {
                     using (new GUILayout.HorizontalScope())
                     {
-                        _executeSetting.CheckAssetPaths[i] = GUILayout.TextField(_executeSetting.CheckAssetPaths[i]);
-                        if (GUILayout.Button(Localization.Get("X")))
+                        if (GUILayout.Button(_deleteButtonTexture, GUILayout.Width(DEFAULT_UI_HEIGHT), GUILayout.Height(DEFAULT_UI_HEIGHT)))
                         {
                             break;
                         }
+                        _executeSetting.CheckAssetPaths[i] = GUILayout.TextField(_executeSetting.CheckAssetPaths[i], GUILayout.Height(DEFAULT_UI_HEIGHT));
                     }
+                    (var valid, string cause) = PathUtility.ValidateCheckPath(_executeSetting.CheckAssetPaths[i]);
+                    if (!valid)
+                    {
+                        GUILayout.Label(cause, EditorStyles.boldLabel);
+                    }
+                    GUILayout.Space(DEFAULT_SPACE);
                 }
                 if (i != _executeSetting.CheckAssetPaths.Count)
                 {
                     _executeSetting.CheckAssetPaths.RemoveAt(i);
                 }
 
-                if (GUILayout.Button(Localization.Get("+")))
+                if (GUILayout.Button(_createNewButtonTexture))
                 {
                     _executeSetting.CheckAssetPaths.Add("");
                 }
@@ -84,19 +103,25 @@ namespace MissingChecker
                 {
                     using (new GUILayout.HorizontalScope())
                     {
-                        _executeSetting.CheckFileExtensions[i] = GUILayout.TextField(_executeSetting.CheckFileExtensions[i]);
-                        if (GUILayout.Button(Localization.Get("X")))
+                        if (GUILayout.Button(_deleteButtonTexture, GUILayout.Width(DEFAULT_UI_HEIGHT), GUILayout.Height(DEFAULT_UI_HEIGHT)))
                         {
                             break;
                         }
+                        _executeSetting.CheckFileExtensions[i] = GUILayout.TextField(_executeSetting.CheckFileExtensions[i], GUILayout.Height(DEFAULT_UI_HEIGHT));
                     }
+                    (var valid, string cause) = PathUtility.ValidateCheckExtension(_executeSetting.CheckFileExtensions[i]);
+                    if (!valid)
+                    {
+                        GUILayout.Label(cause, EditorStyles.boldLabel);
+                    }
+                    GUILayout.Space(DEFAULT_SPACE);
                 }
                 if (i != _executeSetting.CheckFileExtensions.Count)
                 {
                     _executeSetting.CheckFileExtensions.RemoveAt(i);
                 }
 
-                if (GUILayout.Button(Localization.Get("+")))
+                if (GUILayout.Button(_createNewButtonTexture))
                 {
                     _executeSetting.CheckFileExtensions.Add("");
                 }
