@@ -23,6 +23,16 @@ namespace MissingChecker
 
         private readonly List<string> _missingPropertyObjects = new List<string>();
 
+        private readonly Dictionary<string, string> _supportedExtensions = new Dictionary<string, string>()
+        {
+            [".asset"] = "d_ScriptableObject Icon",
+            [".mat"] = "d_Material Icon",
+            [".prefab"] = "d_Prefab Icon",
+            [".anim"] = "d_Animation Icon",
+        };
+
+        private readonly Dictionary<string, GUIContent> _objectIcon = new Dictionary<string, GUIContent>();
+
         [MenuItem("MissingChecker/Open window")]
         internal static void Open()
         {
@@ -43,6 +53,11 @@ namespace MissingChecker
         {
             _deleteButtonTexture = EditorGUIUtility.IconContent("winbtn_win_close");
             _createNewButtonTexture = EditorGUIUtility.IconContent("CreateAddNew");
+
+            foreach (var icon in _supportedExtensions)
+            {
+                _objectIcon[icon.Key] = EditorGUIUtility.IconContent(icon.Value);
+            }
         }
 
         private void OnGUI()
@@ -65,6 +80,8 @@ namespace MissingChecker
                 request.OnException += OnException;
                 MissingCheckerController.ExecuteMissingCheck(request);
             }
+
+            ShowResults();
         }
 
         private void DrawCheckPathList()
@@ -203,6 +220,38 @@ namespace MissingChecker
             }
         }
 
+        private void ShowResults()
+        {
+            if (_missingPropertyObjects.Count == 0)
+            {
+                return;
+            }
+
+            using (new GUILayout.VerticalScope())
+            {
+                GUILayout.Label("Missing‚ªŒ©‚Â‚©‚Á‚½‚à‚Ì", EditorStyles.boldLabel);
+                for (var i = 0; i < _missingPropertyObjects.Count; i++)
+                {
+                    var fileName = Path.GetFileName(_missingPropertyObjects[i]);
+                    var extension = Path.GetExtension(_missingPropertyObjects[i]);
+                    GUIContent icon = _objectIcon.FirstOrDefault().Value;
+                    if (_objectIcon.ContainsKey(extension))
+                    {
+                        icon = _objectIcon[extension];
+                    }
+                    using (new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Box(icon, GUILayout.Width(DEFAULT_UI_SIZE), GUILayout.Height(DEFAULT_UI_SIZE));
+                        if (GUILayout.Button(fileName, EditorStyles.objectField))
+                        {
+                            var target = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(_missingPropertyObjects[i]);
+                            EditorGUIUtility.PingObject(target);
+                        }
+                    }
+                }
+            }
+        }
+
         private void OnCheckAt(string path, bool hasMissingProperty)
         {
             if (hasMissingProperty)
@@ -218,7 +267,6 @@ namespace MissingChecker
             {
                 missings.Append($"{m}\n");
             }
-            Debug.Log($"=====All missing=====\n {missings}");
         }
 
         private void OnException(Exception ex)
