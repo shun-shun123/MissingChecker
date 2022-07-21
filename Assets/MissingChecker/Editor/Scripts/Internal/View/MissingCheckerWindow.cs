@@ -7,7 +7,7 @@ namespace MissingChecker
 {
     internal class MissingCheckerWindow : EditorWindow
     {
-        private const int DEFAULT_UI_HEIGHT = 24;
+        private const int DEFAULT_UI_SIZE = 24;
 
         private const float DEFAULT_SPACE = 8f;
 
@@ -68,16 +68,22 @@ namespace MissingChecker
                 {
                     using (new GUILayout.HorizontalScope())
                     {
-                        if (GUILayout.Button(_deleteButtonTexture, GUILayout.Width(DEFAULT_UI_HEIGHT), GUILayout.Height(DEFAULT_UI_HEIGHT)))
+                        if (GUILayout.Button(_deleteButtonTexture, GUILayout.Width(DEFAULT_UI_SIZE), GUILayout.Height(DEFAULT_UI_SIZE)))
                         {
                             break;
                         }
-                        _executeSetting.CheckAssetPaths[i] = GUILayout.TextField(_executeSetting.CheckAssetPaths[i], GUILayout.Height(DEFAULT_UI_HEIGHT));
+                        _executeSetting.CheckAssetPaths[i] = GUILayout.TextField(_executeSetting.CheckAssetPaths[i], GUILayout.Height(DEFAULT_UI_SIZE));
                     }
                     (var valid, string cause) = PathUtility.ValidateCheckPath(_executeSetting.CheckAssetPaths[i]);
                     if (!valid)
                     {
-                        GUILayout.Label(cause, EditorStyles.boldLabel);
+                        using (new GUILayout.HorizontalScope())
+                        {
+                            var warnIcon = EditorGUIUtility.IconContent("Warning");
+                            GUILayout.Box(warnIcon, GUIStyle.none);
+                            GUILayout.Label(cause, EditorStyles.boldLabel);
+                            GUILayout.FlexibleSpace();
+                        }
                     }
                     GUILayout.Space(DEFAULT_SPACE);
                 }
@@ -103,16 +109,22 @@ namespace MissingChecker
                 {
                     using (new GUILayout.HorizontalScope())
                     {
-                        if (GUILayout.Button(_deleteButtonTexture, GUILayout.Width(DEFAULT_UI_HEIGHT), GUILayout.Height(DEFAULT_UI_HEIGHT)))
+                        if (GUILayout.Button(_deleteButtonTexture, GUILayout.Width(DEFAULT_UI_SIZE), GUILayout.Height(DEFAULT_UI_SIZE)))
                         {
                             break;
                         }
-                        _executeSetting.CheckFileExtensions[i] = GUILayout.TextField(_executeSetting.CheckFileExtensions[i], GUILayout.Height(DEFAULT_UI_HEIGHT));
+                        _executeSetting.CheckFileExtensions[i] = GUILayout.TextField(_executeSetting.CheckFileExtensions[i], GUILayout.Height(DEFAULT_UI_SIZE));
                     }
                     (var valid, string cause) = PathUtility.ValidateCheckExtension(_executeSetting.CheckFileExtensions[i]);
                     if (!valid)
                     {
-                        GUILayout.Label(cause, EditorStyles.boldLabel);
+                        using (new GUILayout.HorizontalScope())
+                        {
+                            var warnIcon = EditorGUIUtility.IconContent("Warning");
+                            GUILayout.Box(warnIcon, GUIStyle.none, GUILayout.Width(DEFAULT_UI_SIZE), GUILayout.Height(DEFAULT_UI_SIZE));
+                            GUILayout.Label(cause, EditorStyles.boldLabel);
+                            GUILayout.FlexibleSpace();
+                        }
                     }
                     GUILayout.Space(DEFAULT_SPACE);
                 }
